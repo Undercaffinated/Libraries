@@ -43,6 +43,24 @@ impl<T: Clone> Matrix<T> {
     fn rc_element(&self, r: usize, c: usize) -> T {
         self.nth_element(self.index_from_row_col(r, c)).clone()
     }
+
+    /// Returns a new vector containing the elements in row r. Note, matrix rows, columsn, and data
+    /// are zero-indexed.
+    fn row(&self, r: usize) -> Vec<T> {
+        let mut v: Vec<T> = Vec::with_capacity(self.columns);
+        for i in 0..self.columns {
+            v.push(self.data[r * self.columns + i].clone());
+        }
+        v
+    }
+
+    fn col(&self, c: usize) -> Vec<T> {
+        let mut v: Vec<T> = Vec::with_capacity(self.rows);
+        for i in 0..self.rows {
+            v.push(self.data[i * self.columns + c].clone());
+        }
+        v
+    }
 }
 
 impl<T: std::ops::Add<Output = T> + Copy + Clone> std::ops::Add for Matrix<T> {
@@ -99,5 +117,18 @@ mod tests {
         let m4 = Matrix::from(3, 3, sum);
 
         assert_eq!(m3, m4);
+    }
+
+    #[test]
+    fn test_getters() {
+        // Row getter
+        let d: Vec<i32> = Vec::from([1, 2, 3, 4]);
+        let m1: Matrix<i32> = Matrix::from(2, 2, d);
+        assert_eq!(m1.row(0), Vec::from([1, 2]));
+        assert_eq!(m1.row(1), Vec::from([3, 4]));
+
+        // Column Getter
+        assert_eq!(m1.col(0), Vec::from([1, 3]));
+        assert_eq!(m1.col(1), Vec::from([2, 4]));
     }
 }
