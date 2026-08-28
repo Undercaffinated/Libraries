@@ -100,6 +100,37 @@ impl<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy + Clone> st
     }
 }
 
+/// ∀a:Vec<T>, ∀b:Vec<T>, dot_product(a,b) := Σ_(i=0)^n(a_i * b_i)
+fn dot_product<T: std::ops::AddAssign + std::ops::Mul<Output = T> + Copy>(
+    a: Vec<T>,
+    b: Vec<T>,
+) -> T {
+    assert_eq!(a.len(), b.len());
+    _sum_vec(_vec_product(a, b))
+}
+
+/// Given array a with data type T, _sum_vec := Σ_(i=0)^n(a_i)
+fn _sum_vec<T: std::ops::AddAssign + Copy>(a: Vec<T>) -> T {
+    let mut acc: T = a[1];
+    if a.len() == 1 {
+        return a[1];
+    }
+    for i in 1..a.len() {
+        acc += a[i];
+    }
+    acc
+}
+
+/// For two arrays a and b with data type T where a.len() == b.len(), _vec_product := Vec::from([a_1 * b_1,
+/// a_2 * b_2, ... a_n * b_n]).
+fn _vec_product<T: Copy + std::ops::Mul<Output = T>>(a: Vec<T>, b: Vec<T>) -> Vec<T> {
+    let mut c: Vec<T> = Vec::with_capacity(a.len());
+    for i in 0..a.len() {
+        c.push(a[i] * b[i]);
+    }
+    c
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
