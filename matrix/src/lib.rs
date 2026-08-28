@@ -1,4 +1,3 @@
-
 #[allow(unused)]
 pub struct Matrix<T> {
     data: Vec<T>,
@@ -6,16 +5,16 @@ pub struct Matrix<T> {
     columns: usize,
 }
 
-
+#[allow(unused)]
 impl<T> Matrix<T> {
-    fn from(r: usize, c: usize, d: Vec<T>) -> Self{
+    fn from(r: usize, c: usize, d: Vec<T>) -> Self {
         // Ensure the size of the given data will fit into a matrix
         // size rows x columns.
         assert!(r * c > d.len());
         Self {
             data: d,
             rows: r,
-            columns: c
+            columns: c,
         }
     }
 }
@@ -45,16 +44,25 @@ impl<T: Clone> Matrix<T> {
     }
 }
 
-impl<T: std::ops::Add> std::ops::Add for Matrix<T> {
-    type Output = T;
+impl<T: std::ops::Add<Output = T> + Copy + Clone> std::ops::Add for Matrix<T> {
+    type Output = Matrix<T>;
 
-    fn add(self, rhs: Self) -> T {
-        
+    fn add(self, rhs: Self) -> Matrix<T> {
+        assert_eq!(self.rows, rhs.rows);
+        assert_eq!(self.columns, rhs.columns);
+        let mut v: Vec<T> = Vec::with_capacity(self.data.len());
+
+        for i in 0..self.data.len() {
+            v.push(self.data[i] + rhs.data[i]);
+        }
+
+        Self {
+            data: v,
+            rows: self.rows,
+            columns: self.columns,
+        }
     }
 }
-
-
-
 
 // #[cfg(test)]
 // mod tests {
@@ -62,9 +70,6 @@ impl<T: std::ops::Add> std::ops::Add for Matrix<T> {
 
 //     // #[test]
 //     // fn test_row_col_from_index() {
-//     //     let a: Matrix<i32> = 
+//     //     let a: Matrix<i32> =
 //     // }
 // }
-
-
-
