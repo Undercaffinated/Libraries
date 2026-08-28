@@ -1,4 +1,5 @@
 #[allow(unused)]
+#[derive(Debug, PartialEq)]
 pub struct Matrix<T> {
     data: Vec<T>,
     rows: usize,
@@ -10,7 +11,7 @@ impl<T> Matrix<T> {
     fn from(r: usize, c: usize, d: Vec<T>) -> Self {
         // Ensure the size of the given data will fit into a matrix
         // size rows x columns.
-        assert!(r * c > d.len());
+        assert!(r * c == d.len());
         Self {
             data: d,
             rows: r,
@@ -64,12 +65,39 @@ impl<T: std::ops::Add<Output = T> + Copy + Clone> std::ops::Add for Matrix<T> {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+impl<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy + Clone> std::ops::Mul
+    for Matrix<T>
+{
+    type Output = Matrix<T>;
 
-//     // #[test]
-//     // fn test_row_col_from_index() {
-//     //     let a: Matrix<i32> =
-//     // }
-// }
+    fn mul(self, rhs: Self) -> Matrix<T> {
+        assert_eq!(self.columns, rhs.rows);
+        let mut v: Vec<T> = Vec::with_capacity(self.rows * rhs.columns);
+
+        Self {
+            data: v,
+            rows: self.rows,
+            columns: self.columns,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_matrix_addition() {
+        let d1: Vec<i32> = Vec::from([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        let d2: Vec<i32> = d1.clone();
+        let sum: Vec<i32> = Vec::from([2, 4, 6, 8, 10, 12, 14, 16, 18]);
+
+        let m1: Matrix<i32> = Matrix::from(3, 3, d1);
+        let m2: Matrix<i32> = Matrix::from(3, 3, d2);
+
+        let m3 = m1 + m2;
+        let m4 = Matrix::from(3, 3, sum);
+
+        assert_eq!(m3, m4);
+    }
+}
