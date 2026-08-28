@@ -92,6 +92,15 @@ impl<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy + Clone> st
         assert_eq!(self.columns, rhs.rows);
         let mut v: Vec<T> = Vec::with_capacity(self.rows * rhs.columns);
 
+        let m_rows = self.rows;
+        let m_columns = rhs.columns;
+
+        for i in 0..m_rows {
+            for j in 0..m_columns {
+                v.push(dot_product(self.row(i), rhs.col(j)));
+            }
+        }
+
         Self {
             data: v,
             rows: self.rows,
@@ -101,7 +110,7 @@ impl<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy + Clone> st
 }
 
 /// ∀a:Vec<T>, ∀b:Vec<T>, dot_product(a,b) := Σ_(i=0)^n(a_i * b_i)
-fn dot_product<T: std::ops::AddAssign + std::ops::Mul<Output = T> + Copy>(
+fn dot_product<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy>(
     a: Vec<T>,
     b: Vec<T>,
 ) -> T {
@@ -110,20 +119,21 @@ fn dot_product<T: std::ops::AddAssign + std::ops::Mul<Output = T> + Copy>(
 }
 
 /// Given array a with data type T, _sum_vec := Σ_(i=0)^n(a_i)
-fn _sum_vec<T: std::ops::AddAssign + Copy>(a: Vec<T>) -> T {
-    let mut acc: T = a[1];
+fn _sum_vec<T: std::ops::Add<Output = T> + Copy>(a: Vec<T>) -> T {
+    let mut acc: T = a[0];
     if a.len() == 1 {
         return a[1];
     }
     for i in 1..a.len() {
-        acc += a[i];
+        acc = acc + a[i];
     }
     acc
 }
 
-/// For two arrays a and b with data type T where a.len() == b.len(), _vec_product := Vec::from([a_1 * b_1,
+/// For two vectors a and b with data type T where a.len() == b.len(), _vec_product := Vec::from([a_1 * b_1,
 /// a_2 * b_2, ... a_n * b_n]).
 fn _vec_product<T: Copy + std::ops::Mul<Output = T>>(a: Vec<T>, b: Vec<T>) -> Vec<T> {
+    assert_eq!(a.len(), b.len());
     let mut c: Vec<T> = Vec::with_capacity(a.len());
     for i in 0..a.len() {
         c.push(a[i] * b[i]);
@@ -148,6 +158,34 @@ mod tests {
         let m4 = Matrix::from(3, 3, sum);
 
         assert_eq!(m3, m4);
+    }
+
+    #[test]
+    fn test_matrix_multiplication() {
+        let d1: Vec<i32> = Vec::from([1, 2, 3, 4]);
+        let d2: Vec<i32> = Vec::from([5, 6, 7, 8]);
+        let d4: Vec<i32> = Vec::from([19, 22, 43, 50]);
+
+        let m1: Matrix<i32> = Matrix::from(2, 2, d1);
+        let m2: Matrix<i32> = Matrix::from(2, 2, d2);
+
+        let m3 = m1 * m2;
+        let m4 = Matrix::from(2, 2, d4);
+
+        assert_eq!(m3, m4);
+    }
+
+    #[test]
+    fn test_sum_vec() {
+        let v: Vec<i32> = Vec::from([1, 2, 3, 4, 5]);
+        assert_eq!(_sum_vec(v), 15);
+    }
+
+    #[test]
+    fn test_vec_product() {
+        let a: Vec<i32> = Vec::from([1, 2, 3, 4]);
+        let b: Vec<i32> = Vec::from([10, 20, 30, 40]);
+        assert_eq!(_vec_product(a, b), Vec::from([10, 40, 90, 160]));
     }
 
     #[test]
