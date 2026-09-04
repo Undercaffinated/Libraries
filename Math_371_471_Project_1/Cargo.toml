@@ -1,0 +1,6 @@
+[package]
+name = "Math_371_471_Project_1"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
