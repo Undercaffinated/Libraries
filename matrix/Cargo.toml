@@ -3,4 +3,12 @@ name = "undercaf_matrix"
 version = "0.1.0"
 edition = "2024"
 
+description = "A small library for managing tabular data, equipped with basic matrix operations. Primarily for academic and educational purposes."
+homepage = "https://github.com/Undercaffinated"
+repository = "https://github.com/Undercaffinated/Libraries"
+license = "The Unlicense"
+
+keywords = ["matrix", "math"]
+
+
 [dependencies]
