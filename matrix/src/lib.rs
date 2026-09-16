@@ -54,6 +54,8 @@ impl<T: Clone> Matrix<T> {
         v
     }
 
+    /// Returns a new vector containing the elements in column
+    /// c. Columns of a matrix are zero-indexed.
     fn col(&self, c: usize) -> Vec<T> {
         let mut v: Vec<T> = Vec::with_capacity(self.rows);
         for i in 0..self.rows {
@@ -66,6 +68,7 @@ impl<T: Clone> Matrix<T> {
 impl<T: std::ops::Add<Output = T> + Copy + Clone> std::ops::Add for Matrix<T> {
     type Output = Matrix<T>;
 
+    /// Performs matrix addition
     fn add(self, rhs: Self) -> Matrix<T> {
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.columns, rhs.columns);
@@ -88,6 +91,7 @@ impl<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy + Clone> st
 {
     type Output = Matrix<T>;
 
+    /// Performs matrix multiplication
     fn mul(self, rhs: Self) -> Matrix<T> {
         assert_eq!(self.columns, rhs.rows);
         let mut v: Vec<T> = Vec::with_capacity(self.rows * rhs.columns);
@@ -109,6 +113,7 @@ impl<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy + Clone> st
     }
 }
 
+/// Performs the dot product operation on two vectors.
 /// ∀a:Vec<T>, ∀b:Vec<T>, dot_product(a,b) := Σ_(i=0)^n(a_i * b_i)
 fn dot_product<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy>(
     a: Vec<T>,
@@ -119,11 +124,13 @@ fn dot_product<T: std::ops::Add<Output = T> + std::ops::Mul<Output = T> + Copy>(
 }
 
 /// Given array a with data type T, _sum_vec := Σ_(i=0)^n(a_i)
+#[allow(clippy::needless_range_loop)]
 fn _sum_vec<T: std::ops::Add<Output = T> + Copy>(a: Vec<T>) -> T {
-    let mut acc: T = a[0];
     if a.len() == 1 {
         return a[1];
     }
+    // 'acc' means 'accumulator'
+    let mut acc: T = a[0];
     for i in 1..a.len() {
         acc = acc + a[i];
     }

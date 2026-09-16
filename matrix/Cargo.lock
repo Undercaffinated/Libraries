@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "matrix"
+name = "undercaf_matrix"
 version = "0.1.0"
